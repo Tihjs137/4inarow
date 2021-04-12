@@ -15,7 +15,27 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+private slots:
+    void on_A0_clicked();
+
+    void on_B0_clicked();
+
+    void on_C0_clicked();
+
+    void on_D0_clicked();
+
+    void on_E0_clicked();
+
+    void on_F0_clicked();
+
+    void on_G0_clicked();
+
+    void on_Reset_clicked();
+
 private:
     Ui::MainWindow *ui;
+
+    void drawBoard(QString myBoard[7][6]);
+
 };
 #endif // MAINWINDOW_H
