@@ -38,9 +38,12 @@ private:
     void disable();
     void enable();
 
+    void makeMove();
+
     QString checkWinner(QString myBoard[7][6]);
+    int minimax(QString myBoard[7][6], int depth, QString isMaximizing);
 
+    void initBoard(QString myBoard[7][6]);
     void drawBoard(QString myBoard[7][6]);
-
 };
 #endif // MAINWINDOW_H
