@@ -35,6 +35,11 @@ private slots:
 private:
     Ui::MainWindow *ui;
 
+    void disable();
+    void enable();
+
+    QString checkWinner(QString myBoard[7][6]);
+
     void drawBoard(QString myBoard[7][6]);
 
 };

@@ -25,7 +25,51 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+QString MainWindow::checkWinner(QString myBoard[7][6])
+{
+    //Horizontal
+    for(int x = 0; x != 7 - 3; x++)
+    {
+        for(int y = 0; y != 6; y++)
+        {
+            if(myBoard[x][y] != " " && myBoard[x][y] == myBoard[x+1][y] && myBoard[x+1][y] == myBoard[x+2][y] && myBoard[x+2][y] == myBoard[x+3][y])
+            {
+                return myBoard[x][y];
+            }
+        }
 
+    }
+
+    //Vertical
+    for(int x = 0; x != 7; x++)
+    {
+        for(int y = 0; y != 6 - 3; y++)
+        {
+            if(myBoard[x][y] != " " && myBoard[x][y] == myBoard[x][y+1] && myBoard[x][y+1] == myBoard[x][y+2] && myBoard[x][y+2] == myBoard[x][y+3])
+            {
+                return myBoard[x][y];
+            }
+        }
+    }
+
+    //diagonaal
+    for(int x = 0; x != 7 - 3; x++)
+    {
+        for(int y = 0; y != 6 - 3; y++)
+        {
+            if(myBoard[x][y] != " " && myBoard[x][y] == myBoard[x+1][y+1] && myBoard[x+1][y+1] == myBoard[x+2][y+2] && myBoard[x+2][y+2] == myBoard[x+3][y+3])
+            {
+                return myBoard[x][y];
+            }
+            if(myBoard[x][y+3] != " " && myBoard[x][y+3] == myBoard[x+1][y+2] && myBoard[x+1][y+2] == myBoard[x+2][y+1] && myBoard[x+2][y+1] == myBoard[x+3][y])
+            {
+                return myBoard[x][y+3];
+            }
+        }
+    }
+
+    return " ";
+}
 
 void MainWindow::on_A0_clicked()
 {
@@ -179,9 +223,39 @@ void MainWindow::drawBoard(QString myBoard[7][6])
     ui->G6->setText(myBoard[6][5]);
 
     ui->currentPlayer->setText(nextPlayer);
+
+    QString winner = checkWinner(board);
+    if(winner != " ")
+    {
+        disable();
+        ui->label_15->setText(winner + " is the winner!");
+        ui->currentPlayer->setText(winner);
+    }
+
+
 }
 
+void MainWindow::disable()
+{
+    ui->A0->setEnabled(false);
+    ui->B0->setEnabled(false);
+    ui->C0->setEnabled(false);
+    ui->D0->setEnabled(false);
+    ui->E0->setEnabled(false);
+    ui->F0->setEnabled(false);
+    ui->G0->setEnabled(false);
+}
 
+void MainWindow::enable()
+{
+    ui->A0->setEnabled(true);
+    ui->B0->setEnabled(true);
+    ui->C0->setEnabled(true);
+    ui->D0->setEnabled(true);
+    ui->E0->setEnabled(true);
+    ui->F0->setEnabled(true);
+    ui->G0->setEnabled(true);
+}
 
 void MainWindow::on_Reset_clicked()
 {
@@ -194,5 +268,8 @@ void MainWindow::on_Reset_clicked()
             board[x][y] = " ";
         }
     }
+
+    ui->label_15->setText("Current player");
+    enable();
     drawBoard(board);
 }
