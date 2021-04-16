@@ -10,6 +10,9 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
+    ui->comboBox->addItem("Player vs Player");
+    ui->comboBox->addItem("MiniMax");
+
     for(int x = 0; x < 7; x++)
     {
         for(int y = 0; y < 6; y++)
@@ -37,7 +40,7 @@ void MainWindow::makeMove()
             if(board[i][y] == " ")
             {
                 board[i][y] = "⦿";
-                int score = minimax(board, 0, "●");
+                int score = minimax(board, ui->Depth->text().toInt(), "●");
                 //int score = 9;
                 board[i][y] = " ";
 
@@ -64,7 +67,7 @@ void MainWindow::makeMove()
 int MainWindow::minimax(QString myBoard[7][6], int depth, QString isMaximizing)
 {
     QString result = checkWinner(myBoard);
-    if(result != "-1" || depth == 6)
+    if(result != "-1" || depth == 0)
     {
         //disableAll();
         //ui->label->setText(checkWinner() + " Is the winner");
@@ -88,17 +91,17 @@ int MainWindow::minimax(QString myBoard[7][6], int depth, QString isMaximizing)
         int bestScore = -999;
         for(int i = 0; i < 7; i++)
         {
-            for(int y = 5; y != -1; y--)
+            for(int y = 5; y > -1; y--)
             {
                 if(board[i][y] == " ")
                 {
                     board[i][y] = "⦿";
-                    int score = minimax(board, depth+1, "●");
+                    int score = minimax(board, depth-1, "●");
                     board[i][y] = " ";
 
                     bestScore = qMax(score, bestScore);
 
-                    y = 0;
+                    //y = 0;
 
                 }
             }
@@ -113,17 +116,17 @@ int MainWindow::minimax(QString myBoard[7][6], int depth, QString isMaximizing)
         int bestScore = 999;
         for(int i = 0; i < 7; i++)
         {
-            for(int y = 5; y != -1; y--)
+            for(int y = 5; y > -1; y--)
             {
                 if(board[i][y] == " ")
                 {
                     board[i][y] = "●";
-                    int score = minimax(board, depth+1, "⦿");
+                    int score = minimax(board, depth-1, "⦿");
                     board[i][y] = " ";
 
                     bestScore = qMin(score, bestScore);
 
-                    y = 0;
+                    //y = 0;
 
                 }
             }
@@ -138,9 +141,9 @@ int MainWindow::minimax(QString myBoard[7][6], int depth, QString isMaximizing)
 QString MainWindow::checkWinner(QString myBoard[7][6])
 {
     //Horizontal
-    for(int x = 0; x != 7 - 3; x++)
+    for(int x = 0; x < 7 - 3; x++)
     {
-        for(int y = 0; y != 6; y++)
+        for(int y = 0; y < 6; y++)
         {
             if(myBoard[x][y] != " " && myBoard[x][y] == myBoard[x+1][y] && myBoard[x+1][y] == myBoard[x+2][y] && myBoard[x+2][y] == myBoard[x+3][y])
             {
@@ -151,9 +154,9 @@ QString MainWindow::checkWinner(QString myBoard[7][6])
     }
 
     //Vertical
-    for(int x = 0; x != 7; x++)
+    for(int x = 0; x < 7; x++)
     {
-        for(int y = 0; y != 6 - 3; y++)
+        for(int y = 0; y < 6 - 3; y++)
         {
             if(myBoard[x][y] != " " && myBoard[x][y] == myBoard[x][y+1] && myBoard[x][y+1] == myBoard[x][y+2] && myBoard[x][y+2] == myBoard[x][y+3])
             {
@@ -163,9 +166,9 @@ QString MainWindow::checkWinner(QString myBoard[7][6])
     }
 
     //diagonaal
-    for(int x = 0; x != 7 - 3; x++)
+    for(int x = 0; x < 7 - 3; x++)
     {
-        for(int y = 0; y != 6 - 3; y++)
+        for(int y = 0; y < 6 - 3; y++)
         {
             if(myBoard[x][y] != " " && myBoard[x][y] == myBoard[x+1][y+1] && myBoard[x+1][y+1] == myBoard[x+2][y+2] && myBoard[x+2][y+2] == myBoard[x+3][y+3])
             {
@@ -284,6 +287,14 @@ void MainWindow::drawBoard(QString myBoard[7][6])
     }
 
 
+    QString winner = checkWinner(board);
+    if(winner != "-1")
+    {
+        disable();
+        ui->label_15->setText(winner + " is the winner!");
+        ui->currentPlayer->setText(winner);
+    }
+
     ui->A1->setText(myBoard[0][0]);
     ui->A2->setText(myBoard[0][1]);
     ui->A3->setText(myBoard[0][2]);
@@ -333,9 +344,19 @@ void MainWindow::drawBoard(QString myBoard[7][6])
     ui->G5->setText(myBoard[6][4]);
     ui->G6->setText(myBoard[6][5]);
 
-    ui->currentPlayer->setText(nextPlayer);
 
 
+
+    if(winner == "-1" && ui->comboBox->currentText() == "MiniMax" )
+    {
+        ui->currentPlayer->setText(nextPlayer);
+
+        makeMove();
+    }
+}
+
+void MainWindow::initBoard(QString myBoard[7][6])
+{
     QString winner = checkWinner(board);
     if(winner != "-1")
     {
@@ -344,13 +365,6 @@ void MainWindow::drawBoard(QString myBoard[7][6])
         ui->currentPlayer->setText(winner);
     }
 
-
-    makeMove();
-
-}
-
-void MainWindow::initBoard(QString myBoard[7][6])
-{
     if(nextPlayer == "⦿")
     {
         nextPlayer = "●"; // "⦿"; //●
@@ -411,13 +425,6 @@ void MainWindow::initBoard(QString myBoard[7][6])
 
     ui->currentPlayer->setText(nextPlayer);
 
-    QString winner = checkWinner(board);
-    if(winner != "-1")
-    {
-        disable();
-        ui->label_15->setText(winner + " is the winner!");
-        ui->currentPlayer->setText(winner);
-    }
 
 }
 
@@ -445,7 +452,7 @@ void MainWindow::enable()
 
 void MainWindow::on_Reset_clicked()
 {
-    nextPlayer = "●";
+    nextPlayer = "⦿";
 
     for(int x = 0; x != 7; x++)
     {
@@ -457,5 +464,5 @@ void MainWindow::on_Reset_clicked()
 
     ui->label_15->setText("Current player");
     enable();
-    drawBoard(board);
+    initBoard(board);
 }
